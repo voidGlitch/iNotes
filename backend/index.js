@@ -4,6 +4,9 @@ connectToMongo();
 const app = express();
 const port = 3000;
 
+//if i want to use req.body i have use this code to see the body code in json format
+app.use(express.json());
+
 //available  routes
 app.use("/api/auth", require("./routes/auth"));
 // app.use("/api/notes", require("./routes/notes"));
