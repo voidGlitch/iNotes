@@ -1,8 +1,11 @@
 import React, { useState } from "react";
+import { useHistory } from "react-router-dom";
 
-const Login = () => {
-  const [credentials, setcredentials] = useState({ email: "", password: "" });
-  const handlesubmit = async (e) => {
+const Login = (props) => {
+  const [credentials, setCredentials] = useState({ email: "", password: "" });
+  let history = useHistory();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
     const response = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
@@ -17,17 +20,21 @@ const Login = () => {
     const json = await response.json();
     console.log(json);
     if (json.success) {
-      //save the auth token and redirect
+      // Save the auth token and redirect
       localStorage.setItem("token", json.authtoken);
+      history.push("/");
+    } else {
+      alert("Invalid credentials");
     }
   };
 
   const onChange = (e) => {
-    setcredentials({ ...credentials, [e.target.name]: e.target.value });
+    setCredentials({ ...credentials, [e.target.name]: e.target.value });
   };
+
   return (
     <div>
-      <form onSubmit={handlesubmit}>
+      <form onSubmit={handleSubmit}>
         <div className="mb-3">
           <label htmlFor="email" className="form-label">
             Email address
@@ -35,15 +42,15 @@ const Login = () => {
           <input
             type="email"
             className="form-control"
-            name="email"
-            id="email"
-            aria-describedby="emailHelp"
             value={credentials.email}
             onChange={onChange}
+            id="email"
+            name="email"
+            aria-describedby="emailHelp"
           />
-        </div>
-        <div id="emailHelp" className="form-text">
-          We'll never share your email with anyone else.
+          <div id="emailHelp" className="form-text">
+            We'll never share your email with anyone else.
+          </div>
         </div>
         <div className="mb-3">
           <label htmlFor="password" className="form-label">
@@ -52,12 +59,13 @@ const Login = () => {
           <input
             type="password"
             className="form-control"
-            id="password"
-            name="password"
-            onChange={onChange}
             value={credentials.password}
+            onChange={onChange}
+            name="password"
+            id="password"
           />
         </div>
+
         <button type="submit" className="btn btn-primary">
           Submit
         </button>
